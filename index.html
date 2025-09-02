@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel Interativo</title>
+<style>
+  body { margin:0; font-family: Arial, sans-serif; background:#1e1e1e; color:white; }
+  header { display:flex; justify-content: space-between; padding: 10px 20px; background:#111; }
+  #clock { font-size: 2em; }
+  #weather { font-size: 1.2em; }
+  #main { display:flex; height: calc(100vh - 60px); }
+  #trello { flex:2; border:none; }
+  #sidebar { flex:1; display:flex; flex-direction: column; padding:10px; box-sizing:border-box; }
+  #calendar { flex:1; margin-bottom:10px; border:none; }
+  #notes { flex:1; border:none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div id="clock"></div>
+  <div id="weather">Clima: --°C</div>
+</header>
+
+<div id="main">
+  <iframe id="trello" src="https://trello.com/b/AXt0BPN4/my-workspace" title="Trello"></iframe>
+  <div id="sidebar">
+    <iframe id="calendar" src="https://calendar.google.com/calendar/u/0/r" title="Calendário"></iframe>
+    <iframe id="notes" src="https://keep.google.com/u/0/" title="Notas"></iframe>
+  </div>
+</div>
+
+<script>
+function updateClock(){
+  const now = new Date();
+  const h = now.getHours().toString().padStart(2,'0');
+  const m = now.getMinutes().toString().padStart(2,'0');
+  const s = now.getSeconds().toString().padStart(2,'0');
+  document.getElementById('clock').textContent = `${h}:${m}:${s}`;
+}
+setInterval(updateClock,1000);
+updateClock();
+</script>
+
+</body>
+</html>
