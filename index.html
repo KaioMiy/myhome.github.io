@@ -3,18 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Painel Horário e Clima</title>
+<title>Painel Alexa Animado</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
   body {
     margin:0;
     font-family: 'Helvetica Neue', Arial, sans-serif;
-    background:#000; /* preto OLED */
+    background:#000;
     color:white;
     display:flex;
-    justify-content:center;
+    flex-direction:column;
     align-items:center;
-    height:100vh;
+    justify-content:center;
+    min-height:100vh;
+    transition: background 1s;
   }
 
   #container {
@@ -24,53 +26,50 @@
   }
 
   .card {
-    background:rgba(255,255,255,0.05);
-    color:white;
-    text-align:center;
+    background: rgba(255,255,255,0.05);
     padding:30px 40px;
     border-radius:30px;
-    box-shadow: 0 0 40px rgba(255,255,255,0.05);
-    min-width:200px;
+    text-align:center;
+    min-width:250px;
+    box-shadow:0 0 40px rgba(255,255,255,0.05);
     display:flex;
     flex-direction:column;
     align-items:center;
   }
 
-  h1 {
+  #clock {
     font-size:4em;
     margin:0;
-    font-weight: 300;
+    font-weight:300;
   }
 
-  h2 {
-    font-size:2.5em;
+  #date {
+    font-size:1.3em;
+    color:#aaa;
+    margin-top:5px;
+  }
+
+  #weather {
+    font-size:3em;
     margin:0;
   }
 
-  h3 {
+  #weather-desc {
     font-size:1.2em;
-    font-weight: 400;
-    margin-bottom:10px;
     color:#ccc;
-  }
-
-  p {
-    font-size:1em;
-    color:#aaa;
-    margin:5px 0 0 0;
+    margin:5px 0;
     text-transform: capitalize;
   }
 
-  #weather-icon {
-    width:100px;
-    height:100px;
-    margin-top:15px;
+  #weather-extra {
+    font-size:1em;
+    color:#aaa;
+    margin-top:5px;
   }
 
-  /* efeito circular de destaque no clima, como Alexa */
   #weather-circle {
-    width:140px;
-    height:140px;
+    width:120px;
+    height:120px;
     border-radius:50%;
     background:rgba(255,255,255,0.05);
     display:flex;
@@ -78,41 +77,114 @@
     align-items:center;
     margin-top:15px;
     box-shadow: 0 0 20px rgba(255,255,255,0.1);
+    animation: glow 2s infinite alternate;
+    position:relative;
+    overflow:hidden;
   }
+
+  #weather-icon {
+    width:80px;
+    height:80px;
+    position:relative;
+    z-index:2;
+  }
+
+  /* Glow animado do círculo */
+  @keyframes glow {
+    0% { box-shadow: 0 0 10px rgba(255,255,255,0.05); }
+    100% { box-shadow: 0 0 30px rgba(255,255,255,0.2); }
+  }
+
+  /* Nuvem animada */
+  .cloud {
+    position:absolute;
+    top:30%;
+    left:-50px;
+    width:50px;
+    height:30px;
+    background:rgba(255,255,255,0.3);
+    border-radius:50%;
+    animation: cloudMove 6s linear infinite;
+  }
+
+  @keyframes cloudMove {
+    0% { left:-50px; }
+    100% { left:120%; }
+  }
+
+  /* Chuva animada */
+  .rain {
+    position:absolute;
+    width:2px;
+    height:10px;
+    background:rgba(255,255,255,0.5);
+    top:10%;
+    left:50%;
+    animation: rainFall 1s linear infinite;
+  }
+
+  @keyframes rainFall {
+    0% { transform: translateY(0); opacity:1; }
+    100% { transform: translateY(50px); opacity:0; }
+  }
+
+  /* Sol girando */
+  .sun {
+    position:absolute;
+    width:80px;
+    height:80px;
+    border-radius:50%;
+    background:yellow;
+    animation: spin 20s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
 </style>
 </head>
 <body>
 
 <div id="container">
-  <!-- Hora -->
+  <!-- Hora e Data -->
   <div class="card">
-    <h3>Hora</h3>
     <h1 id="clock">--:--</h1>
+    <div id="date">--</div>
   </div>
 
   <!-- Clima -->
   <div class="card">
-    <h3>Clima</h3>
     <h2 id="weather">--°C</h2>
     <p id="weather-desc">--</p>
     <div id="weather-circle">
       <img id="weather-icon" src="" alt="Ícone do clima">
     </div>
+    <div id="weather-extra">
+      <p id="feels-like">Sensação: --°C</p>
+      <p id="humidity">Umidade: --%</p>
+    </div>
   </div>
 </div>
 
 <script>
-// Relógio
+// Relógio e data
 function updateClock(){
   const now = new Date();
   const h = now.getHours().toString().padStart(2,'0');
   const m = now.getMinutes().toString().padStart(2,'0');
+  const days = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const day = days[now.getDay()];
+  const date = now.getDate().toString().padStart(2,'0');
+  const month = (now.getMonth()+1).toString().padStart(2,'0');
   document.getElementById('clock').textContent = `${h}:${m}`;
+  document.getElementById('date').textContent = `${day}, ${date}/${month}`;
 }
 setInterval(updateClock,1000);
 updateClock();
 
-// Clima via OpenWeatherMap
+// Clima via OpenWeatherMap com animação simples
 async function updateWeather(){
   const apiKey = "ae6e8eb623676a4ab2530a8bdcf590a5"; // coloque sua chave
   const city = "Torre de Pedra,BR";  
@@ -122,18 +194,48 @@ async function updateWeather(){
     const temp = Math.round(data.main.temp);
     const desc = data.weather[0].description;
     const icon = data.weather[0].icon;
+    const feels = Math.round(data.main.feels_like);
+    const hum = data.main.humidity;
 
     document.getElementById('weather').textContent = `${temp}°C`;
     document.getElementById('weather-desc').textContent = desc;
     document.getElementById('weather-icon').src = `https://openweathermap.org/img/wn/${icon}@2x.png`;
+    document.getElementById('feels-like').textContent = `Sensação: ${feels}°C`;
+    document.getElementById('humidity').textContent = `Umidade: ${hum}%`;
+
+    // Limpa animações anteriores
+    const circle = document.getElementById('weather-circle');
+    circle.querySelectorAll('.cloud,.rain,.sun').forEach(e => e.remove());
+
+    // Adiciona animação conforme ícone
+    if(icon.startsWith('01')){ // sol
+      const sun = document.createElement('div');
+      sun.className = 'sun';
+      circle.appendChild(sun);
+      document.body.style.background = '#000'; // fundo escuro
+    }else if(icon.startsWith('02') || icon.startsWith('03') || icon.startsWith('04')){ // nuvens
+      const cloud = document.createElement('div');
+      cloud.className = 'cloud';
+      circle.appendChild(cloud);
+      document.body.style.background = '#111';
+    }else if(icon.startsWith('09') || icon.startsWith('10')){ // chuva
+      for(let i=0;i<5;i++){
+        const rain = document.createElement('div');
+        rain.className = 'rain';
+        rain.style.left = `${10 + i*20}%`;
+        circle.appendChild(rain);
+      }
+      document.body.style.background = '#111';
+    }else{
+      document.body.style.background = '#000';
+    }
+
   }catch(err){
-    document.getElementById('weather').textContent = "--°C";
-    document.getElementById('weather-desc').textContent = "Erro ao carregar";
-    document.getElementById('weather-icon').src = "";
+    console.log(err);
   }
 }
 updateWeather();
-setInterval(updateWeather, 10 * 60 * 1000); 
+setInterval(updateWeather, 10 * 60 * 1000);
 </script>
 
 </body>
