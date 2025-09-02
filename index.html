@@ -8,49 +8,96 @@
 <style>
   body {
     margin:0;
-    font-family: Arial, sans-serif;
-    background:#000000; /* 100% preto */
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background:#000; /* preto OLED */
     color:white;
     display:flex;
     justify-content:center;
     align-items:center;
     height:100vh;
   }
+
   #container {
     display:flex;
-    gap:40px;
+    gap:60px;
     align-items:center;
   }
+
   .card {
-    background:#111;
+    background:rgba(255,255,255,0.05);
     color:white;
     text-align:center;
-    padding:20px;
-    border-radius:15px;
-    box-shadow: 0 0 15px rgba(255,255,255,0.1);
-    min-width:180px;
+    padding:30px 40px;
+    border-radius:30px;
+    box-shadow: 0 0 40px rgba(255,255,255,0.05);
+    min-width:200px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
   }
-  h1,h2,h3,p { margin:0; }
+
+  h1 {
+    font-size:4em;
+    margin:0;
+    font-weight: 300;
+  }
+
+  h2 {
+    font-size:2.5em;
+    margin:0;
+  }
+
+  h3 {
+    font-size:1.2em;
+    font-weight: 400;
+    margin-bottom:10px;
+    color:#ccc;
+  }
+
+  p {
+    font-size:1em;
+    color:#aaa;
+    margin:5px 0 0 0;
+    text-transform: capitalize;
+  }
+
   #weather-icon {
-    width:80px;
-    height:80px;
-    margin-top:10px;
+    width:100px;
+    height:100px;
+    margin-top:15px;
+  }
+
+  /* efeito circular de destaque no clima, como Alexa */
+  #weather-circle {
+    width:140px;
+    height:140px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.05);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    margin-top:15px;
+    box-shadow: 0 0 20px rgba(255,255,255,0.1);
   }
 </style>
 </head>
 <body>
 
 <div id="container">
+  <!-- Hora -->
   <div class="card">
     <h3>Hora</h3>
-    <h1 id="clock">--:--:--</h1>
+    <h1 id="clock">--:--</h1>
   </div>
 
+  <!-- Clima -->
   <div class="card">
     <h3>Clima</h3>
     <h2 id="weather">--°C</h2>
     <p id="weather-desc">--</p>
-    <img id="weather-icon" src="" alt="Ícone do clima">
+    <div id="weather-circle">
+      <img id="weather-icon" src="" alt="Ícone do clima">
+    </div>
   </div>
 </div>
 
@@ -60,8 +107,7 @@ function updateClock(){
   const now = new Date();
   const h = now.getHours().toString().padStart(2,'0');
   const m = now.getMinutes().toString().padStart(2,'0');
-  const s = now.getSeconds().toString().padStart(2,'0');
-  document.getElementById('clock').textContent = `${h}:${m}:${s}`;
+  document.getElementById('clock').textContent = `${h}:${m}`;
 }
 setInterval(updateClock,1000);
 updateClock();
@@ -75,7 +121,7 @@ async function updateWeather(){
     const data = await res.json();
     const temp = Math.round(data.main.temp);
     const desc = data.weather[0].description;
-    const icon = data.weather[0].icon; // código do ícone
+    const icon = data.weather[0].icon;
 
     document.getElementById('weather').textContent = `${temp}°C`;
     document.getElementById('weather-desc').textContent = desc;
@@ -87,7 +133,7 @@ async function updateWeather(){
   }
 }
 updateWeather();
-setInterval(updateWeather, 10 * 60 * 1000); // atualiza a cada 10 min
+setInterval(updateWeather, 10 * 60 * 1000); 
 </script>
 
 </body>
