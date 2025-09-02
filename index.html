@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel Horário e Clima</title>
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  body {
+    margin:0;
+    font-family: Arial, sans-serif;
+    background:#1e1e1e;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+  }
+  .card {
+    background:#222;
+    color:white;
+    text-align:center;
+    padding:20px;
+    border-radius:12px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    min-width:180px;
+    margin:10px;
+  }
+  h1, h2, h3 { margin:0; }
+  #container { display:flex; gap:30px; }
+</style>
+</head>
+<body>
+
+<div id="container">
+  <div class="card">
+    <h3>Hora</h3>
+    <h1 id="clock">--:--:--</h1>
+  </div>
+
+  <div class="card">
+    <h3>Clima</h3>
+    <h2 id="weather">--°C</h2>
+    <p id="weather-desc">--</p>
+  </div>
+</div>
+
+<script>
+// Relógio
+function updateClock(){
+  const now = new Date();
+  const h = now.getHours().toString().padStart(2,'0');
+  const m = now.getMinutes().toString().padStart(2,'0');
+  const s = now.getSeconds().toString().padStart(2,'0');
+  document.getElementById('clock').textContent = `${h}:${m}:${s}`;
+}
+setInterval(updateClock,1000);
+updateClock();
+
+// Clima via OpenWeatherMap
+async function updateWeather(){
+  const apiKey = "ae6e8eb623676a4ab2530a8bdcf590a5"; // coloque sua chave aqui
+  const city = "Torre de Pedra,BR";  
+  try{
+    const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=pt_br&appid=${apiKey}`);
+    const data = await res.json();
+    document.getElementById('weather').textContent = `${Math.round(data.main.temp)}°C`;
+    document.getElementById('weather-desc').textContent = data.weather[0].description;
+  }catch(err){
+    document.getElementById('weather').textContent = "--°C";
+    document.getElementById('weather-desc').textContent = "Erro ao carregar";
+  }
+}
+updateWeather();
+setInterval(updateWeather, 10 * 60 * 1000); // atualiza a cada 10 min
+</script>
+
+</body>
+</html>
