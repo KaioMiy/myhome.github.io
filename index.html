@@ -21,128 +21,129 @@
 
   #container {
     display:flex;
-    gap:60px;
+    gap:80px;
     align-items:center;
   }
 
   .card {
     background: rgba(255,255,255,0.05);
-    padding:30px 40px;
-    border-radius:30px;
+    padding:50px 60px;
+    border-radius:40px;
     text-align:center;
-    min-width:250px;
-    box-shadow:0 0 40px rgba(255,255,255,0.05);
+    min-width:300px;
+    min-height:300px;
+    box-shadow:0 0 50px rgba(255,255,255,0.05);
     display:flex;
     flex-direction:column;
     align-items:center;
   }
 
   #clock {
-    font-size:4em;
+    font-size:5em;
     margin:0;
     font-weight:300;
+    color:white;
   }
 
   #date {
-    font-size:1.3em;
-    color:#aaa;
-    margin-top:5px;
+    font-size:1.5em;
+    color:white;
+    margin-top:10px;
   }
 
   #weather {
-    font-size:3em;
+    font-size:4em;
     margin:0;
+    color:white;
   }
 
   #weather-desc {
-    font-size:1.2em;
-    color:#ccc;
+    font-size:1.5em;
+    color:white;
     margin:5px 0;
     text-transform: capitalize;
   }
 
   #weather-extra {
-    font-size:1em;
-    color:#aaa;
-    margin-top:5px;
+    font-size:1.2em;
+    color:white;
+    margin-top:10px;
   }
 
   #weather-circle {
-    width:120px;
-    height:120px;
+    width:160px;
+    height:160px;
     border-radius:50%;
     background:rgba(255,255,255,0.05);
     display:flex;
     justify-content:center;
     align-items:center;
-    margin-top:15px;
-    box-shadow: 0 0 20px rgba(255,255,255,0.1);
-    animation: glow 2s infinite alternate;
+    margin-top:20px;
+    box-shadow: 0 0 30px rgba(255,255,255,0.1);
+    animation: glow 4s infinite alternate; /* animação mais lenta */
     position:relative;
     overflow:hidden;
   }
 
   #weather-icon {
-    width:80px;
-    height:80px;
+    width:100px;
+    height:100px;
     position:relative;
     z-index:2;
   }
 
-  /* Glow animado do círculo */
   @keyframes glow {
-    0% { box-shadow: 0 0 10px rgba(255,255,255,0.05); }
-    100% { box-shadow: 0 0 30px rgba(255,255,255,0.2); }
+    0% { box-shadow: 0 0 15px rgba(255,255,255,0.05); }
+    100% { box-shadow: 0 0 40px rgba(255,255,255,0.2); }
   }
 
   /* Nuvem animada */
   .cloud {
     position:absolute;
     top:30%;
-    left:-50px;
-    width:50px;
-    height:30px;
+    left:-60px;
+    width:60px;
+    height:35px;
     background:rgba(255,255,255,0.3);
     border-radius:50%;
-    animation: cloudMove 6s linear infinite;
+    animation: cloudMove 12s linear infinite; /* mais lenta */
   }
 
   @keyframes cloudMove {
-    0% { left:-50px; }
+    0% { left:-60px; }
     100% { left:120%; }
   }
 
   /* Chuva animada */
   .rain {
     position:absolute;
-    width:2px;
-    height:10px;
+    width:3px;
+    height:15px;
     background:rgba(255,255,255,0.5);
     top:10%;
     left:50%;
-    animation: rainFall 1s linear infinite;
+    animation: rainFall 2s linear infinite; /* mais lenta */
   }
 
   @keyframes rainFall {
     0% { transform: translateY(0); opacity:1; }
-    100% { transform: translateY(50px); opacity:0; }
+    100% { transform: translateY(60px); opacity:0; }
   }
 
   /* Sol girando */
   .sun {
     position:absolute;
-    width:80px;
-    height:80px;
+    width:100px;
+    height:100px;
     border-radius:50%;
     background:yellow;
-    animation: spin 20s linear infinite;
+    animation: spin 40s linear infinite; /* mais lenta */
   }
 
   @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
-
 </style>
 </head>
 <body>
@@ -184,7 +185,7 @@ function updateClock(){
 setInterval(updateClock,1000);
 updateClock();
 
-// Clima via OpenWeatherMap com animação simples
+// Clima via OpenWeatherMap com animação lenta
 async function updateWeather(){
   const apiKey = "ae6e8eb623676a4ab2530a8bdcf590a5"; // coloque sua chave
   const city = "Torre de Pedra,BR";  
@@ -212,7 +213,7 @@ async function updateWeather(){
       const sun = document.createElement('div');
       sun.className = 'sun';
       circle.appendChild(sun);
-      document.body.style.background = '#000'; // fundo escuro
+      document.body.style.background = '#000';
     }else if(icon.startsWith('02') || icon.startsWith('03') || icon.startsWith('04')){ // nuvens
       const cloud = document.createElement('div');
       cloud.className = 'cloud';
