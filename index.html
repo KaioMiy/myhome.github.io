@@ -4,34 +4,46 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Painel Interativo</title>
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
   body { margin:0; font-family: Arial, sans-serif; background:#1e1e1e; color:white; }
-  header { display:flex; justify-content: space-between; padding: 10px 20px; background:#111; }
-  #clock { font-size: 2em; }
-  #weather { font-size: 1.2em; }
-  #main { display:flex; height: calc(100vh - 60px); }
-  #trello { flex:2; border:none; }
-  #sidebar { flex:1; display:flex; flex-direction: column; padding:10px; box-sizing:border-box; }
-  #calendar { flex:1; margin-bottom:10px; border:none; }
-  #notes { flex:1; border:none; }
+  header { padding: 15px; background:#111; display:flex; justify-content:flex-end; gap:20px; }
+  .card-header { font-weight:bold; font-size:1.1em; }
+  #main { display:flex; height: calc(100vh - 80px); gap:10px; padding:10px; box-sizing:border-box; }
+  #calendar, #notes { flex:1; border:none; border-radius:8px; overflow:hidden; }
+  .card { background:#222; color:white; }
 </style>
 </head>
 <body>
 
 <header>
-  <div id="clock"></div>
-  <div id="weather">Clima: --°C</div>
+  <div class="card text-center p-3" style="min-width:120px;">
+    <div class="card-header">Hora</div>
+    <div class="card-body">
+      <h2 id="clock">--:--:--</h2>
+    </div>
+  </div>
+
+  <div class="card text-center p-3" style="min-width:120px;">
+    <div class="card-header">Clima</div>
+    <div class="card-body">
+      <h4 id="weather">--°C</h4>
+      <p id="weather-desc">--</p>
+    </div>
+  </div>
 </header>
 
 <div id="main">
-  <iframe id="trello" src="https://trello.com/b/AXt0BPN4/my-workspace" title="Trello"></iframe>
-  <div id="sidebar">
-    <iframe id="calendar" src="https://calendar.google.com/calendar/u/0/r" title="Calendário"></iframe>
-    <iframe id="notes" src="https://keep.google.com/u/0/" title="Notas"></iframe>
-  </div>
+  <iframe id="calendar" src="https://calendar.google.com/calendar/u/0/r" title="Calendário"></iframe>
+  <iframe id="notes" src="https://keep.google.com/u/0/" title="Notas"></iframe>
 </div>
 
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
+// Atualiza relógio
 function updateClock(){
   const now = new Date();
   const h = now.getHours().toString().padStart(2,'0');
@@ -41,6 +53,24 @@ function updateClock(){
 }
 setInterval(updateClock,1000);
 updateClock();
+
+// Função simples para pegar clima (exemplo com OpenWeatherMap API)
+// Você precisa colocar sua própria API Key
+async function updateWeather(){
+  const apiKey = "ae6e8eb623676a4ab2530a8bdcf590a5";
+  const city = "São Paulo,BR";
+  try{
+    const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=pt_br&appid=${apiKey}`);
+    const data = await res.json();
+    document.getElementById('weather').textContent = `${Math.round(data.main.temp)}°C`;
+    document.getElementById('weather-desc').textContent = data.weather[0].description;
+  }catch(err){
+    document.getElementById('weather').textContent = "--°C";
+    document.getElementById('weather-desc').textContent = "Erro";
+  }
+}
+updateWeather();
+setInterval(updateWeather, 10 * 60 * 1000); // atualiza a cada 10 min
 </script>
 
 </body>
